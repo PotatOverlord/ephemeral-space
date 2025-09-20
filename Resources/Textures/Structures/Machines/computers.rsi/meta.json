@@ -15,7 +15,6 @@
         },
         {
             "name": "ai-fixer-empty",
-            "directions": 4,
             "delays": [
                 [
                     0.7,

@@ -66,7 +66,6 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly MetaDataSystem _metaData = default!;
         [Dependency] private readonly SharedRoleSystem _roles = default!;
         [Dependency] private readonly ServerDbEntryManager _dbEntryManager = default!;
-        [Dependency] private readonly IBugReportManager _bugManager = default!;
         // ES START
         [Dependency] private readonly AlertsSystem _alerts = default!;
         // ES END
