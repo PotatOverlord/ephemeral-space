@@ -105,7 +105,12 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
 
         EnsureComp<ShuttleComponent>(ev.EntityUid);
 // ES START
-        // EnsureComp<ImplicitRoofComponent>(ev.EntityUid);
+        // I am not fucking w/ this rn
+        // This and RoofComponent should be mutually exclusive, so ImplicitRoof should be removed if the grid has RoofComponent
+        //if (HasComp<RoofComponent>(ev.EntityUid))
+        //    RemComp<ImplicitRoofComponent>(ev.EntityUid);
+        //else
+        //    EnsureComp<ImplicitRoofComponent>(ev.EntityUid);
 // ES END
     }
 
