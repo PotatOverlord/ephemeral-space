@@ -45,6 +45,8 @@
       proper: true
       gender: epicene
   - type: TypingIndicator
+  - type: Speech
+    speechSounds: Tenor
   - type: Tag
     tags:
     - FootstepSound
