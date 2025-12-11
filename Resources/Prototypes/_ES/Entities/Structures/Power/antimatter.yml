@@ -32,6 +32,11 @@
   - type: EventHorizon
     consumerFixtureId: fix1
     consumeTiles: false
+    consumeAliveMobs: false
+  - type: DamageContacts
+    damage:
+      types:
+        Cellular: 5
   - type: Explosive
     explosionType: Default
     totalIntensity: 60
