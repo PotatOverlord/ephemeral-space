@@ -417,7 +417,7 @@ public sealed class EventHorizonSystem : SharedEventHorizonSystem
     {
         if (args.Cancelled)
             return;
-        if (!MobStateSystem.IsDead(ent.Owner, ent.Comp))
+        if (!MobStateSystem.IsDead(ent.Owner, ent.Comp) && args.EventHorizon.consumeAliveMobs)
             PreventConsume(ent.Owner, ent.Comp, ref args);
     }
 
