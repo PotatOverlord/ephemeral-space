@@ -3,7 +3,6 @@ using System.Linq;
 using Content.Server._ES.Auditions;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
-using Content.Server.Objectives;
 using Content.Server.Roles.Jobs;
 using Content.Shared._ES.Core.Entity;
 using Content.Shared._ES.Masks;
@@ -29,7 +28,6 @@ public sealed class ESMaskSystem : ESSharedMaskSystem
     [Dependency] private readonly EntityTableSystem _entityTable = default!;
     [Dependency] private readonly GameTicker _gameTicker = default!;
     [Dependency] private readonly JobSystem _job = default!;
-    [Dependency] private readonly ObjectivesSystem _objectives = default!;
 
     private static readonly EntProtoId<ESMaskRoleComponent> MindRole = "ESMindRoleMask";
 
@@ -89,28 +87,8 @@ public sealed class ESMaskSystem : ESSharedMaskSystem
 
     public void InitializeTroupeObjectives(Entity<ESTroupeRuleComponent> rule)
     {
-        var (uid, comp) = rule;
-        var troupe = PrototypeManager.Index(comp.Troupe);
-        var objectives = _entityTable.GetSpawns(troupe.Objectives).ToList();
-        if (objectives.Count == 0)
-            return;
-        // Yes. This sucks. Yell at me when objectives aren't dogshit
-        EnsureComp<MindComponent>(uid);
-
-        var dummyMind = Mind.CreateMind(null);
-
-        foreach (var objective in objectives)
-        {
-            if (!_objectives.TryCreateObjective(dummyMind, objective, out var objectiveUid))
-                continue;
-            comp.AssociatedObjectives.Add(objectiveUid.Value);
-            foreach (var mind in comp.TroupeMemberMinds)
-            {
-                var mindComp = Comp<MindComponent>(mind);
-                Mind.AddObjective(mind, mindComp, objectiveUid.Value);
-            }
-        }
-        Del(dummyMind);
+        var troupe = PrototypeManager.Index(rule.Comp.Troupe);
+        Objective.TryAddObjective(rule.Owner, troupe.Objectives);
     }
 
     public bool TryAssignToTroupe(Entity<ESTroupeRuleComponent> ent, ref List<ICommonSession> players)
@@ -175,6 +153,9 @@ public sealed class ESMaskSystem : ESSharedMaskSystem
             if (maskProto.Troupe != troupe)
                 continue;
 
+            // TODO: check the mask has valid objectives.
+            // Don't assign masks if their objectives can't be done.
+
             weights.Add(maskProto, maskProto.Weight);
         }
 
@@ -197,10 +178,7 @@ public sealed class ESMaskSystem : ESSharedMaskSystem
         roleComp.Mask = maskId;
         Dirty(role.Value, roleComp);
 
-        foreach (var objective in _entityTable.GetSpawns(mask.Objectives))
-        {
-            Mind.TryAddObjective(mind, mind, objective);
-        }
+        Objective.TryAddObjective(mind.Owner, mask.Objectives);
 
         var msg = Loc.GetString("es-mask-selected-chat-message",
             ("role", Loc.GetString(mask.Name)),
@@ -219,9 +197,6 @@ public sealed class ESMaskSystem : ESSharedMaskSystem
         EntityManager.AddComponents(mind, mask.MindComponents);
 
         troupe.Comp.TroupeMemberMinds.Add(mind);
-        foreach (var objective in troupe.Comp.AssociatedObjectives)
-        {
-            Mind.AddObjective(mind, mind, objective);
-        }
+        Objective.RefreshObjectives(mind.Owner);
     }
 }

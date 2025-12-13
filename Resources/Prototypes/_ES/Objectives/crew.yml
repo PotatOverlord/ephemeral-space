@@ -3,30 +3,30 @@
   id: ESObjectiveEatSummonedFruit
   description: Use your ability to manifest delicious fruits and feed them to the people on the station.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Specific/Hydroponics/apple.rsi
       state: produce
   - type: ESEatSummonableObjective
-  - type: NumberObjective
+  - type: ESCounterObjective
     title: es-fruit-vendor-objective-title
-    min: 10
-    max: 15
+    target: 10
+    maxTarget: 15
 
 - type: entity
   parent: ESBaseMaskObjective
   id: ESObjectiveHoldSummonedGuns
   description: Use your ability to summon firearms and make sure crew members hold onto them until the end of the shift.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Objects/Weapons/Guns/shotgun.rsi
       state: icon
   - type: ESHoldSummonableObjective
-  - type: NumberObjective
+  - type: ESCounterObjective
     title: es-arms-dealer-objective-title
-    min: 5
-    max: 8
+    target: 5
+    maxTarget: 8
 
 - type: entity
   parent: ESBaseMaskObjective
@@ -34,16 +34,14 @@
   name: Kill a bad guy
   description: Use your trusty weapon to kill a non-crew person on the station.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Objects/Weapons/Guns/357.rsi
       state: icon
   - type: ESKillTroupeObjective
     troupe: ESCrew
     invert: true
-  - type: NumberObjective
-    min: 1
-    max: 2 # non-inclusive
+  - type: ESCounterObjective
 
 - type: entity
   parent: ESBaseMaskObjective
@@ -51,15 +49,16 @@
   name: Guzzle
   description: Consume as much liquid as you can, from anywhere you can get it!
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Tools/bucket.rsi
       state: icon
   - type: ESGuzzleObjective
-  - type: NumberObjective
+  - type: ESCounterObjective
     title: es-guzzle-objective-title
-    min: 1000
-    max: 2001 # non-inclusive, a space odyssey.
+    target: 1000
+    maxTarget: 2000
+    targetIncrement: 100
 
 - type: entity
   parent: ESBaseMaskObjective
@@ -67,11 +66,10 @@
   name: Guzzle Special Interest
   description: Consume as much of your Special Interest as you can!
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Tools/bucket.rsi
       state: icon
-    unique: false
   - type: ESImbibeReagentObjective
     canBeFromFood: false # you're GUZZLING not MUNCHING.
     descriptionLoc: es-imbibe-reagent-guzzler-desc
@@ -92,10 +90,11 @@
     - SoapReagent
     - SpaceCleaner
     - SpaceLube
-  - type: NumberObjective
+  - type: ESCounterObjective
     title: es-guzzle-specific-objective-title
-    min: 100
-    max: 201 # non-inclusive, a spce odysey.
+    target: 100
+    maxTarget: 200
+    targetIncrement: 10
 
 - type: entity
   parent: ESBaseMaskObjective
@@ -103,13 +102,13 @@
   name: Guzzle
   description: Consume as many unique liquids as you can, from anywhere you can get them!
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Consumable/Drinks/shaker.rsi
       state: icon
   - type: ESImbibeUniqueReagentsObjective
     canBeFromFood: false
-  - type: NumberObjective
+  - type: ESCounterObjective
     title: es-guzzle-unique-reagents-objective-title
-    min: 15
-    max: 25 # non-inclusive, non-space non-odyssey.
+    target: 15
+    maxTarget: 25

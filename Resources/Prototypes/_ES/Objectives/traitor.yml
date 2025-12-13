@@ -13,29 +13,20 @@
 - type: entity
   parent: ESBaseTraitorObjectiveMinor
   id: ESObjectiveTraitorKillRandom
+  name: Kill...
   description: The syndicate needs to make sure they don't interfere with our plans.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Weapons/Melee/kitchen_knife.rsi
       state: icon
-  - type: TargetObjective
+  - type: ESTargetObjective
     title: es-objective-condition-crewmember-kill-title
-  - type: PickRandomPerson
-    filters:
-    # You can only get kill objectives for people on your station.
-    - !type:ESShareStationFilter
-    # Must not be a syndie
-    - !type:ESHasTroupeFilter
-      troupe: ESTraitor
-      inverted: true
-    # Can't have multiple objectives to kill the same person.
-    - !type:TargetObjectiveMindFilter
-      blacklist:
-        components:
-        - KillPersonCondition
-  - type: KillPersonCondition
-    requireDead: true
+  - type: ESTargetPlayersObjective
+  - type: ESTargetTroupeObjective
+    troupe: ESTraitor
+    invert: true
+  - type: ESKillTargetObjective
 
 - type: entity
   parent: ESBaseTraitorObjectiveMinor
@@ -43,10 +34,11 @@
   name: Sabotage the communications computer
   description: The syndicate is trying to calculate the station trajectory. It can be extracted from the communications computer.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Structures/Machines/computer.rsi
       state: comm-icon
+  - type: ESCounterObjective
   - type: ESSabotageCondition
     whitelist:
       components:
@@ -58,10 +50,11 @@
   name: Sabotage the crew monitoring server
   description: The syndicate is trying to acquire sensitive crew medical records. It can be extracted from the crew monitoring server.
   components:
-  - type: Objective
+  - type: ESObjective
     icon: # TODO: proper icon once it's resprited
       sprite: Objects/Tools/wrench.rsi
       state: icon
+  - type: ESCounterObjective
   - type: ESSabotageCondition
     whitelist:
       components:
@@ -73,10 +66,11 @@
   name: Sabotage the ID card computer
   description: The syndicate want to steal the crew manifest data. It can be extracted from the ID card computer.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Structures/Machines/computer.rsi
       state: id-icon
+  - type: ESCounterObjective
   - type: ESSabotageCondition
     whitelist:
       components:
@@ -88,10 +82,11 @@
   name: Sabotage the criminal records
   description: The syndicate needs information on its imprisoned members. It can be extracted from the criminal records computer.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Structures/Machines/computer.rsi
       state: security-icon
+  - type: ESCounterObjective
   - type: ESSabotageCondition
     whitelist:
       components:
@@ -103,10 +98,11 @@
   name: Sabotage the telecom server
   description: The syndicate needs to decode encrypted communication logs from Nanotrasen. They can be found in one of the station telecom servers.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Structures/Machines/telecomms.rsi
       state: icon
+  - type: ESCounterObjective
   - type: ESSabotageCondition
     whitelist:
       components:
@@ -118,7 +114,7 @@
   name: Hack the nuclear cryptographic terminals
   description: Once the objectives above are completed, hack the terminals to unlock the code for the nuke.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: _ES/Structures/Machines/computer.rsi
       state: cryptonuke-icon
@@ -130,8 +126,9 @@
   name: Detonate the nuclear fission explosive
   description: Using the captain's authentication disk, arm the nuke and prevent the crew from stopping the detonation.
   components:
-  - type: Objective
+  - type: ESObjective
     icon:
       sprite: Objects/Devices/nuke.rsi
       state: nuclearbomb_base
+  - type: ESCounterObjective
   - type: ESDetonateNukeObjective
