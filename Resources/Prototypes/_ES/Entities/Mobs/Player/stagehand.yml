@@ -40,8 +40,10 @@
   - type: Ghost # TODO: reason about the implications of this
     toggleLightingAction: ESActionStagehandChangeLighting
     toggleFoVAction: ESActionStagehandToggleFOV
+    deleteOnDetach: false
   - type: ESStagehand
   - type: ESUsernameEntityName
+  - type: ESMindVisuals
   - type: ESBlockInteraction
   - type: ShowElectrocutionHUD
   - type: ShowAntagIcons
