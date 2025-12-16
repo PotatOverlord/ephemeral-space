@@ -415,10 +415,11 @@ public sealed class EventHorizonSystem : SharedEventHorizonSystem
     // ES Start
     public void PreventConsumeAlive(Entity<MobStateComponent> ent, ref EventHorizonAttemptConsumeEntityEvent args)
     {
-        if (args.Cancelled)
+        if (args.Cancelled || args.EventHorizon.consumeAliveMobs)
             return;
-        if (!MobStateSystem.IsDead(ent.Owner, ent.Comp) && args.EventHorizon.consumeAliveMobs)
-            PreventConsume(ent.Owner, ent.Comp, ref args);
+        if (MobStateSystem.IsDead(ent.Owner, ent.Comp))
+            return;
+        PreventConsume(ent.Owner, ent.Comp, ref args);
     }
 
     // ES End
