@@ -58,6 +58,9 @@
 
 - type: Tag
   id: ESSuitEVACaptain
+  
+- type: Tag
+  id: ESSpawnerCargo
 
 - type: Tag
   id: ESSuitEVAEngi
