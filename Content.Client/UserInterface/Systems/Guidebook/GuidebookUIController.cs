@@ -183,6 +183,9 @@ public sealed class GuidebookUIController : UIController, IOnStateEntered<LobbyS
         if (guides == null)
         {
             guides = _prototypeManager.EnumeratePrototypes<GuideEntryPrototype>()
+                // ES START
+                .Where(x => !x.Hidden)
+                // ES END
                 .ToDictionary(x => new ProtoId<GuideEntryPrototype>(x.ID), x => (GuideEntry) x);
         }
         else if (includeChildren)
@@ -208,9 +211,12 @@ public sealed class GuidebookUIController : UIController, IOnStateEntered<LobbyS
         }
         _guideWindow.UpdateGuides(guides, rootEntries, forceRoot, selected);
 
+        // ES START
+        // only expand to depth 1
         // Expand up to depth-2.
         _guideWindow.Tree.SetAllExpanded(false);
-        _guideWindow.Tree.SetAllExpanded(true, 1);
+        _guideWindow.Tree.SetAllExpanded(true, 0);
+        // ES END
 
         _guideWindow.OpenCenteredRight();
     }

@@ -28,6 +28,10 @@ public sealed class SmartFridgeSystem : EntitySystem
     {
         base.Initialize();
 
+        // ES START
+        SubscribeLocalEvent<SmartFridgeComponent, EntInsertedIntoContainerMessage>(OnItemInserted);
+        // ES END
+
         SubscribeLocalEvent<SmartFridgeComponent, InteractUsingEvent>(OnInteractUsing, after: [typeof(AnchorableSystem)]);
         SubscribeLocalEvent<SmartFridgeComponent, EntRemovedFromContainerMessage>(OnItemRemoved);
 
@@ -58,6 +62,10 @@ public sealed class SmartFridgeSystem : EntitySystem
             anyInserted = true;
 
             _container.Insert(used, container);
+            // ES START
+            continue;
+            // ES END
+
             var key = new SmartFridgeEntry(Identity.Name(used, EntityManager));
             if (!ent.Comp.Entries.Contains(key))
                 ent.Comp.Entries.Add(key);
@@ -85,6 +93,25 @@ public sealed class SmartFridgeSystem : EntitySystem
 
         args.Handled = DoInsert(ent, args.User, [args.Used], true);
     }
+
+    // ES START
+    private void OnItemInserted(Entity<SmartFridgeComponent> ent, ref EntInsertedIntoContainerMessage args)
+    {
+        if (args.Container.ID != ent.Comp.Container || _timing.ApplyingState)
+            return;
+
+        var key = new SmartFridgeEntry(Identity.Name(args.Entity, EntityManager));
+        if (!ent.Comp.Entries.Contains(key))
+            ent.Comp.Entries.Add(key);
+
+        ent.Comp.ContainedEntries.TryAdd(key, new());
+        var entries = ent.Comp.ContainedEntries[key];
+        if (!entries.Contains(GetNetEntity(args.Entity)))
+            entries.Add(GetNetEntity(args.Entity));
+
+        Dirty(ent);
+    }
+    // ES END
 
     private void OnItemRemoved(Entity<SmartFridgeComponent> ent, ref EntRemovedFromContainerMessage args)
     {

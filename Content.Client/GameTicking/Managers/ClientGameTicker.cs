@@ -3,8 +3,10 @@ using Content.Client.Administration.Managers;
 using Content.Client.Gameplay;
 using Content.Client.Lobby;
 using Content.Client.RoundEnd;
+using Content.Client.UserInterface.Systems.Guidebook;
 using Content.Shared.CCVar;
 using Content.Shared.GameTicking;
+using Content.Shared.GameTicking.Prototypes;
 using Content.Shared.GameWindow;
 using Content.Shared.Roles;
 using JetBrains.Annotations;
@@ -39,7 +41,7 @@ namespace Content.Client.GameTicking.Managers
         // ES END
         [ViewVariables] public bool IsGameStarted { get; private set; }
         [ViewVariables] public ResolvedSoundSpecifier? RestartSound { get; private set; }
-        [ViewVariables] public string? LobbyBackground { get; private set; }
+        [ViewVariables] public ProtoId<LobbyBackgroundPrototype>? LobbyBackground { get; private set; }
         [ViewVariables] public bool DisallowedLateJoin { get; private set; }
         [ViewVariables] public string? ServerInfoBlob { get; private set; }
         [ViewVariables] public TimeSpan StartTime { get; private set; }
@@ -98,6 +100,7 @@ namespace Content.Client.GameTicking.Managers
 
             // lobby->game closing
             if (ReadyStatus is (PlayerGameStatus.Observing or PlayerGameStatus.ReadyToPlay)
+                && !Paused
                 && StartTime > curTime
                 && _lobbyCurtains.CurtainState == LobbyCurtainState.Open
                 && StartTime - curTime <= TimeSpan.FromSeconds(3))
@@ -175,6 +178,7 @@ namespace Content.Client.GameTicking.Managers
             _stateManager.RequestStateChange<LobbyState>();
             // ES START
             _startOpenAnimationTime = _timing.RealTime + TimeSpan.FromSeconds(0.5);
+            _userInterfaceManager.GetUIController<GuidebookUIController>().ToggleGuidebook();
             // ES END
         }
 

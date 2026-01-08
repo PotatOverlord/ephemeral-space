@@ -26,14 +26,13 @@
   - type: GuideHelp
     guides:
     - Radio
-# ES START
-  - type: ESRadioFalloff
-# ES END
 
 - type: entity
   parent: ClothingHeadset
   id: ClothingHeadsetGrey
-  name: passenger headset
+# ES START
+  name: assistant headset
+# ES END
   components:
   - type: Sprite
     sprite: Clothing/Ears/Headsets/base.rsi

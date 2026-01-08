@@ -107,7 +107,9 @@
     enabled: false
     usesApcPower: true
   - type: WiresPanel
-  - type: WiresPanelSecurity
+# ES START
+  #- type: WiresPanelSecurity
+# ES END
   - type: Wires
     boardName: wires-board-name-airlock
     layoutId: Airlock
@@ -187,6 +189,9 @@
     - Networking
 # ES START
   - type: ESGreyTideVirusTarget
+  - type: ESSparkOnHit
+    prob: 0.25
+    count: 2
 # ES END
   placement:
     mode: SnapgridCenter

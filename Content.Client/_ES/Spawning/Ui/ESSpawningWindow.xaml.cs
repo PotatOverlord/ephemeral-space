@@ -1,5 +1,7 @@
 using System.Linq;
 using System.Numerics;
+using Content.Client._ES.Core;
+using Content.Client._ES.Lobby;
 using Content.Client._ES.Station.Ui;
 using Content.Client.GameTicking.Managers;
 using Content.Client.Lobby;
@@ -29,6 +31,7 @@ public sealed partial class ESSpawningWindow : FancyWindow
     [Dependency] private readonly IEntitySystemManager _entitySystem = default!;
     [Dependency] private readonly JobRequirementsManager _jobRequirements = default!;
 
+    private ESLobbyCurtainsUIController _lobbyCurtains;
     private readonly ClientGameTicker _gameTicker;
     private readonly SpriteSystem _sprites;
     private readonly StationSystem _station;
@@ -43,6 +46,7 @@ public sealed partial class ESSpawningWindow : FancyWindow
         _sprites = _entitySystem.GetEntitySystem<SpriteSystem>();
         _gameTicker = _entitySystem.GetEntitySystem<ClientGameTicker>();
         _station = _entitySystem.GetEntitySystem<StationSystem>();
+        _lobbyCurtains = UserInterfaceManager.GetUIController<ESLobbyCurtainsUIController>();
 
         Rebuild();
         _jobRequirements.Updated += RebuildJobLists;
@@ -78,6 +82,9 @@ public sealed partial class ESSpawningWindow : FancyWindow
 
     private void RebuildJobLists()
     {
+        if (Disposed)
+            return;
+
         _jobButtons.Clear();
         JobContainer.Children.Clear();
         JobContainer2.Children.Clear();
@@ -124,9 +131,11 @@ public sealed partial class ESSpawningWindow : FancyWindow
                 };
                 button.OnPressed += _ =>
                 {
+                    // Start curtains
+                    // Server will delay the actual spawn a bit so the curtains have time to work
                     var ev = new ESSpawnPlayerEvent(GetNetSelectedStations().ToList(), job);
                     _entityManager.EntityNetManager.SendSystemNetworkMessage(ev);
-                    Close();
+                    _lobbyCurtains.StartCurtainAnimation(false);
                 };
                 button.OnMouseEntered += _ =>
                 {
@@ -279,9 +288,9 @@ public sealed class ESJobButton : ContainerButton
 
         // We don't care if the number of available slots increases by infinity. that is meaningless.
         JobFilteredAmountLabel.Visible = filteredAmount != 0 && amount != null;
-        JobFilteredAmountLabel.Text = filteredAmount != null
+        JobFilteredAmountLabel.UnsafeSetMarkup(filteredAmount != null
             ? Loc.GetString("es-spawn-menu-job-slot-excluded", ("amount", filteredAmount))
-            : Loc.GetString("es-spawn-menu-job-slot-excluded-uncapped");
+            : Loc.GetString("es-spawn-menu-job-slot-excluded-uncapped"));
 
         if (!Disabled && amount == 0)
             Disabled = true;

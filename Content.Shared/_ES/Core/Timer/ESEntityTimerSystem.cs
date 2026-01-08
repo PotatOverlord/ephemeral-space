@@ -1,5 +1,7 @@
 using Content.Shared._ES.Core.Timer.Components;
 using JetBrains.Annotations;
+using Robust.Shared.Collections;
+using Robust.Shared.Map;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._ES.Core.Timer;
@@ -13,7 +15,26 @@ public sealed class ESEntityTimerSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
     /// <summary>
-    /// Spawns a timer entity that raises an event after a specified duration
+    /// Spawns a timer entity that raises a broadcast event after a specified duration.
+    /// </summary>
+    /// <param name="duration">Duration of the timer</param>
+    /// <param name="endEvent">Event that will be raised when the timer is finished</param>
+    /// <returns>The timer that was created</returns>
+    [PublicAPI]
+    public Entity<ESEntityTimerComponent>? SpawnTimer(TimeSpan duration, ESEntityTimerEvent endEvent)
+    {
+        var uid = Spawn(null, MapCoordinates.Nullspace);
+        var comp = AddComp<ESEntityTimerComponent>(uid);
+
+        comp.TimerEndEvent = endEvent;
+        comp.TimerEnd = _timing.CurTime + duration;
+        Dirty(uid, comp);
+
+        return (uid, comp);
+    }
+
+    /// <summary>
+    /// Spawns a timer entity that raises a directed event on a target after a specified duration.
     /// </summary>
     /// <param name="target">Entity the event will raise on</param>
     /// <param name="duration">Duration of the timer</param>
@@ -46,14 +67,27 @@ public sealed class ESEntityTimerSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        var firingTimers = new ValueList<Entity<ESEntityTimerComponent, TransformComponent>>();
         var query = EntityQueryEnumerator<ESEntityTimerComponent, TransformComponent>();
         while (query.MoveNext(out var uid, out var timer, out var xform))
         {
             if (_timing.CurTime < timer.TimerEnd)
                 continue;
 
+            firingTimers.Add((uid, timer, xform));
+        }
+
+        // loop over firing timers separately to avoid collection exceptions from adding new timers in an event raise
+        foreach (var (uid, timer, xform) in firingTimers)
+        {
             var target = xform.ParentUid;
-            if (TimerTargetIsValid(target))
+
+            // broadcast
+            if (xform.MapID == MapId.Nullspace)
+            {
+                RaiseLocalEvent((object) timer.TimerEndEvent);
+            }
+            else if (TimerTargetIsValid(target))
             {
                 RaiseLocalEvent(target, (object) timer.TimerEndEvent);
             }

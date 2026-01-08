@@ -148,6 +148,14 @@ public abstract class SharedImplanterSystem : EntitySystem
         var ev = new TransferDnaEvent { Donor = target, Recipient = implanter };
         RaiseLocalEvent(target, ref ev);
 
+        // ES START
+        if (component.DeleteImplanterOnImplant)
+        {
+            PredictedQueueDel(implanter);
+            return;
+        }
+        // ES END
+
         Dirty(implanter, component);
     }
 
@@ -177,7 +185,7 @@ public abstract class SharedImplanterSystem : EntitySystem
     protected bool CheckTarget(EntityUid target, EntityWhitelist? whitelist, EntityWhitelist? blacklist)
     {
         return _whitelistSystem.IsWhitelistPassOrNull(whitelist, target) &&
-            _whitelistSystem.IsBlacklistFailOrNull(blacklist, target);
+            _whitelistSystem.IsWhitelistFailOrNull(blacklist, target);
     }
 
     //Draw the implant out of the target

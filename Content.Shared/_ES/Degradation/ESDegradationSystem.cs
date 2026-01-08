@@ -1,11 +1,9 @@
 using Content.Shared._ES.Degradation.Components;
+using Content.Shared._ES.Sparks;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Doors;
 using Content.Shared.Doors.Components;
-using Robust.Shared.Audio;
-using Robust.Shared.Audio.Systems;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared._ES.Degradation;
 
@@ -16,10 +14,7 @@ namespace Content.Shared._ES.Degradation;
 public sealed class ESDegradationSystem : EntitySystem
 {
     [Dependency] private readonly ISharedAdminLogManager _adminLog = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-
-    private static readonly EntProtoId SparkEffect = "EffectSparks";
-    private static readonly  SoundSpecifier SparkSound = new SoundCollectionSpecifier("sparks");
+    [Dependency] private readonly ESSparksSystem _sparks = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -34,6 +29,14 @@ public sealed class ESDegradationSystem : EntitySystem
         Degrade(ent.Owner, null);
     }
 
+    public bool TryDegrade(Entity<ESQueuedDegradationComponent?> ent, EntityUid? user)
+    {
+        if (!Resolve(ent, ref ent.Comp, false))
+            return false;
+
+        return Degrade(ent, user);
+    }
+
     public bool Degrade(EntityUid target, EntityUid? user)
     {
         var ev = new ESUndergoDegradationEvent(user);
@@ -41,9 +44,7 @@ public sealed class ESDegradationSystem : EntitySystem
         if (!ev.Handled)
             return false;
 
-        // TODO: Proper Sparks
-        _audio.PlayPredicted(SparkSound, target, user);
-        PredictedSpawnAtPosition(SparkEffect, Transform(target).Coordinates);
+        _sparks.DoSparks(target, user: user, tileFireChance: 0.3f, cooldown: false);
 
         if (user.HasValue)
         {

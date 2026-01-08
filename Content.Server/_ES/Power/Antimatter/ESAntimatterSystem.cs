@@ -156,9 +156,10 @@ public sealed class ESAntimatterSystem : ESSharedAntimatterSystem
 
         var area = _itemQuery.TryComp(args.entity, out var item)
             ? _item.GetItemShape((args.entity, item)).GetArea()
-            : 16; // arbitrary number
+            : 4; // arbitrary number
 
-        var massAdjustment = MathF.Pow(area, 2) / 2f;
+        // a 2x2 item (4) will be roughly enough to destroy 1 patch
+        var massAdjustment = area * 15;
         SetMass(ent, ent.Comp.Mass - massAdjustment);
 
         _audio.PlayPvs(ent.Comp.ConsumeSound, Transform(ent).Coordinates);
@@ -219,7 +220,8 @@ public sealed class ESAntimatterSystem : ESSharedAntimatterSystem
             {
                 var toRemove = Math.Min(antimatter.Comp.Mass, comp.RemovalAmount);
                 SetMass(antimatter, antimatter.Comp.Mass - toRemove);
-                _battery.SetCharge(uid, battery.CurrentCharge + toRemove * comp.EnergyPerMass, battery);
+                var currentCharge = _battery.GetCharge((uid, battery));
+                _battery.SetCharge((uid, battery), currentCharge + toRemove * comp.EnergyPerMass);
             }
 
             Appearance.SetData(uid, ESAntimatterConverterVisuals.Draining, _antimatterSet.Count != 0);

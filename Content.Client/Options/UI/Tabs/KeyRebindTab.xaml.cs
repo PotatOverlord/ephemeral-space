@@ -156,6 +156,8 @@ namespace Content.Client.Options.UI.Tabs
             // ES START
             AddHeader("ui-options-header-es");
             AddButton(ContentKeyFunctions.ESHoldToFace);
+            AddButton(ContentKeyFunctions.ESToggleInternals);
+            AddButton(ContentKeyFunctions.ESToggleFlashlight);
             // ES END
 
             AddHeader("ui-options-header-movement");
@@ -276,6 +278,8 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(EngineKeyFunctions.ShowDebugMonitors);
             AddButton(EngineKeyFunctions.HideUI);
             AddButton(ContentKeyFunctions.InspectEntity);
+            AddButton(ContentKeyFunctions.InspectServerComponent);
+            AddButton(ContentKeyFunctions.InspectClientComponent);
 
             AddHeader("ui-options-header-text-cursor");
             AddButton(EngineKeyFunctions.TextCursorLeft);

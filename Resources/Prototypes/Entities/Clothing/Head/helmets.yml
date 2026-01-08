@@ -149,6 +149,9 @@
     layers:
       Hair: HEAD
       Snout: HEAD
+# ES START
+  - type: ESVoiceObfuscator
+# ES END
 
 #Janitorial Bombsuit Helmet
 - type: entity
@@ -221,6 +224,8 @@
     sprite: Clothing/Head/Helmets/templar.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/templar.rsi
+  - type: Item
+    storedRotation: 0
   - type: IngestionBlocker
   - type: IdentityBlocker
   - type: HideLayerClothing
@@ -268,8 +273,19 @@
   components:
   - type: Sprite
     sprite: Clothing/Head/Helmets/firehelmet.rsi
+# ES Start
+    layers:
+    - state: icon
+    - state: light-icon
+      shader: unshaded
+      visible: false
+      map: [ "light" ]
+# ES End
   - type: Clothing
     sprite: Clothing/Head/Helmets/firehelmet.rsi
+# ES Start
+    equippedPrefix: off
+# ES End
     quickEquip: true
   - type: IngestionBlocker
   - type: TemperatureProtection
@@ -277,7 +293,6 @@
     coolingCoefficient: 0.8
   - type: FireProtection
     reduction: 0.15 # not fully sealed so less protection
-  - type: IdentityBlocker
   - type: Tag
     tags:
     - WhitelistChameleon
@@ -518,7 +533,7 @@
   - type: PointLight
     enabled: false
     radius: 1.4
-    energy: 1.4
+    energy: 2.5
     color: red
     netsync: false
     mask: /Textures/Effects/LightMasks/double_cone.png

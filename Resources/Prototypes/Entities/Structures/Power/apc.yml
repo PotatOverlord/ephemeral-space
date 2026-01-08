@@ -9,12 +9,14 @@
   components:
   - type: StationAiWhitelist
   # ES START
-  #- type: AmbientOnPowered
-  #- type: AmbientSound
-  #  volume: -9
-  #  range: 2
-  #  sound:
-  #    path: /Audio/Ambience/Objects/hdd_buzz.ogg
+  - type: AmbientOnPowered
+  - type: AmbientSound
+    volume: -12
+    range: 10 # max range
+    sound:
+      path: /Audio/Ambience/shipambience.ogg # plays nonpositionally, so this is stereo
+    maxSoundOverride: 1
+    playPositional: false
   - type: PointLight
     radius: 1.8
     energy: 3
@@ -63,6 +65,11 @@
   - type: Appearance
   - type: ApcVisuals
   - type: Battery
+    # Very important:
+    # Disable networking to prevent the battery getting continuously dirtied every tick as it interacts with the power network.
+    # This can not be done by changing the charge rate as the power supply ramps up over time.
+    # This disables prediction for this battery.
+    netsync: false
     maxCharge: 50000
     startingCharge: 0
   - type: ExaminableBattery

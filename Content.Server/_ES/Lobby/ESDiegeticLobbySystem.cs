@@ -1,9 +1,9 @@
 using Content.Server.GameTicking;
+using Content.Server.GameTicking.Events;
 using Content.Server.Preferences.Managers;
 using Content.Shared._ES.Lobby;
 using Content.Shared._ES.Lobby.Components;
 using Content.Shared.Alert;
-using Content.Shared.Buckle.Components;
 using Content.Shared.GameTicking;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
@@ -35,8 +35,8 @@ public sealed class ESDiegeticLobbySystem : ESSharedDiegeticLobbySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<ESOnPlayerReadyToggled>(OnPlayerReadyToggled);
         SubscribeLocalEvent<ESTheatergoerMarkerComponent, ComponentInit>(OnTheatergoerInit);
+        SubscribeLocalEvent<RoundStartingEvent>(OnRoundStarting);
         // buckling (to observe) is handled on the client
         // opens the observe window, which just calls the observe command if u click yes
         // and then the actual behavior is just in that command.
@@ -45,7 +45,7 @@ public sealed class ESDiegeticLobbySystem : ESSharedDiegeticLobbySystem
 
         _player.PlayerStatusChanged += (_, args) =>
         {
-            if (args.NewStatus is not SessionStatus.Disconnected and not SessionStatus.Zombie)
+            if (args.NewStatus is SessionStatus.Disconnected or SessionStatus.Zombie or SessionStatus.Connecting)
                 return;
 
             var ev = new ESUpdatePlayerReadiedJobCounts(_readiedJobCounts);
@@ -54,8 +54,9 @@ public sealed class ESDiegeticLobbySystem : ESSharedDiegeticLobbySystem
         _preferences.ESOnAfterCharacterUpdated += RefreshReadiedJobCounts;
     }
 
-    private void OnPlayerReadyToggled(ref ESOnPlayerReadyToggled ev)
+    protected override void OnPlayerReadyToggled(ref ESOnPlayerReadyToggled ev)
     {
+        base.OnPlayerReadyToggled(ref ev);
         RefreshReadiedJobCounts();
     }
 
@@ -110,19 +111,20 @@ public sealed class ESDiegeticLobbySystem : ESSharedDiegeticLobbySystem
         }
     }
 
-    protected override void OnTheatergoerUnbuckled(Entity<ESTheatergoerMarkerComponent> ent, ref UnbuckledEvent args)
-    {
-        if (!HasComp<ESObserverChairComponent>(args.Strap.Owner)
-            || !TryComp<ActorComponent>(ent.Owner, out var actor))
-            return;
-
-        _ticker.ToggleReady(actor.PlayerSession, PlayerGameStatus.NotReadyToPlay);
-    }
-
     // add unreadied alert by default
     private void OnTheatergoerInit(Entity<ESTheatergoerMarkerComponent> ent, ref ComponentInit args)
     {
         if (_ticker.RunLevel is GameRunLevel.PreRoundLobby)
             _alerts.ShowAlert(ent.Owner, NotReadiedAlert);
+    }
+
+    private void OnRoundStarting(RoundStartingEvent ev)
+    {
+        var query = EntityQueryEnumerator<ESTheatergoerMarkerComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            Actions.RemoveAction(uid, comp.ConfigurePrefsActionEntity);
+            comp.ConfigurePrefsActionEntity = null;
+        }
     }
 }

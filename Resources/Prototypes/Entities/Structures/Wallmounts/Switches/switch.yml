@@ -122,8 +122,11 @@
     transmitFrequencyId: SmartLight # assuming people want to use it for light switches.
   - type: ApcNetworkConnection
   - type: ApcNetSwitch
+# ES START
+    state: true
   - type: Transform
-    anchored: false
+    #anchored: false
+# ES END
   - type: Construction
     graph: LightSwitchGraph
     node: LightSwitchNode

@@ -30,7 +30,9 @@
   suffix: Wall
   components:
     - type: WallMount
-      arc: 360
+      # ES START
+      arc: 180
+      # ES END
     - type: Appearance
     - type: StationMap
     - type: Sprite
@@ -49,7 +51,9 @@
       containers:
         board: !type:Container
     - type: ApcPowerReceiver
-      powerLoad: 200
+      # ES START
+      powerLoad: 20
+      # ES END
     - type: Construction
       graph: StationMap
       node: station_map

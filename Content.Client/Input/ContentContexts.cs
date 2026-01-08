@@ -38,6 +38,8 @@ namespace Content.Client.Input
             common.AddFunction(ContentKeyFunctions.ZoomIn);
             common.AddFunction(ContentKeyFunctions.ResetZoom);
             common.AddFunction(ContentKeyFunctions.InspectEntity);
+            common.AddFunction(ContentKeyFunctions.InspectServerComponent);
+            common.AddFunction(ContentKeyFunctions.InspectClientComponent);
             common.AddFunction(ContentKeyFunctions.ToggleRoundEndSummaryWindow);
 
             // Not in engine, because engine cannot check for sanbox/admin status before starting placement.
@@ -51,6 +53,8 @@ namespace Content.Client.Input
 
             // ES START
             common.AddFunction(ContentKeyFunctions.ESHoldToFace);
+            common.AddFunction(ContentKeyFunctions.ESToggleInternals);
+            common.AddFunction(ContentKeyFunctions.ESToggleFlashlight);
             // ES END
 
             var human = contexts.GetContext("human");

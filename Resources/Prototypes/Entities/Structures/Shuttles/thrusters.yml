@@ -37,7 +37,9 @@
     - type: Appearance
     - type: ThrusterVisuals
     - type: ApcPowerReceiver
-      powerLoad: 1500
+      # ES START
+      powerLoad: 600
+      # ES END
     - type: ExtensionCableReceiver
     - type: Damageable
       damageContainer: StructuralInorganic
@@ -88,7 +90,9 @@
         - !type:ChangeConstructionNodeBehavior
           node: machineFrame
   - type: Sprite
-    sprite: Structures/Shuttles/thruster.rsi
+# ES Start
+    sprite: _ES/Structures/Shuttles/thruster.rsi
+# ES End
     layers:
     - state: base
       map: ["enum.ThrusterVisualLayers.Base"]
@@ -101,6 +105,13 @@
       shader: unshaded
       visible: false
       offset: 0, 1
+
+- type: entity
+  parent: Thruster
+  id: ThrusterXenoborg
+  components:
+  - type: Sprite
+    sprite: Structures/Shuttles/xenoborg_thruster.rsi
 
 - type: entity
   id: ThrusterLarge
@@ -186,7 +197,9 @@
     needsPower: false
     powerLoad: 0
   - type: Sprite
-    sprite: Structures/Shuttles/thruster.rsi
+# ES Start
+    sprite: _ES/Structures/Shuttles/thruster.rsi
+# ES End
     layers:
     - state: base
       map: ["enum.ThrusterVisualLayers.Base"]

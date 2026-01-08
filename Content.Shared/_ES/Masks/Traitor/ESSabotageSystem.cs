@@ -1,18 +1,27 @@
 using Content.Shared._ES.Degradation;
 using Content.Shared._ES.Masks.Traitor.Components;
+using Content.Shared._ES.Objectives;
+using Content.Shared.Administration;
+using Content.Shared.Administration.Managers;
 using Content.Shared.DoAfter;
+using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Verbs;
+using Content.Shared.Whitelist;
+using JetBrains.Annotations;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._ES.Masks.Traitor;
 
 public sealed class ESSabotageSystem : EntitySystem
 {
+    [Dependency] private readonly ISharedAdminManager _admin = default!;
     [Dependency] private readonly ESDegradationSystem _degradation = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly ESSharedMaskSystem _mask = default!;
+    [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
+    [Dependency] private readonly ESSharedObjectiveSystem _objective = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -21,9 +30,35 @@ public sealed class ESSabotageSystem : EntitySystem
         SubscribeLocalEvent<ESSabotageTargetComponent, ESSabotageDoAfterEvent>(OnSabotage);
     }
 
+    /// <summary>
+    ///     Returns true if the user should be capable of sabotaging the given target.
+    /// </summary>
+    [PublicAPI]
+    public bool CanSabotage(EntityUid user, Entity<ESSabotageTargetComponent> target)
+    {
+        // for localhost debugging
+        if (_admin.HasAdminFlag(user, AdminFlags.Debug))
+            return true;
+
+        if (_mind.GetMind(user) is not { } mind)
+            return false;
+
+        // overriding, for vandal etc
+        if (HasComp<ESCanAlwaysSabotageComponent>(user) || HasComp<ESCanAlwaysSabotageComponent>(mind))
+            return true;
+
+        foreach (var objective in _objective.GetObjectives<ESSabotageConditionComponent>(mind))
+        {
+            if (_entityWhitelist.IsWhitelistPass(objective.Comp.Whitelist, target))
+                return true;
+        }
+
+        return false;
+    }
+
     private void OnGetVerbs(Entity<ESSabotageTargetComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
-        if (_mask.GetTroupeOrNull(args.User) != ent.Comp.SabotageTroupe)
+        if (!CanSabotage(args.User, ent))
             return;
 
         var user = args.User;
@@ -42,6 +77,7 @@ public sealed class ESSabotageSystem : EntitySystem
                         ent)
                     {
                         BlockDuplicate = true,
+                        DuplicateCondition = DuplicateConditions.SameEvent,
                         BreakOnMove = true,
                         BreakOnDamage = true,
                     }))
@@ -55,6 +91,9 @@ public sealed class ESSabotageSystem : EntitySystem
     private void OnSabotage(Entity<ESSabotageTargetComponent> ent, ref ESSabotageDoAfterEvent args)
     {
         if (args.Cancelled || args.Handled)
+            return;
+
+        if (!CanSabotage(args.User, ent))
             return;
 
         _degradation.Degrade(ent, args.User);

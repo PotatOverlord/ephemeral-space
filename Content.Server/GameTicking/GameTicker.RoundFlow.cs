@@ -8,6 +8,7 @@ using Content.Server.Roles;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
+using Content.Shared.Maps;
 using Content.Shared.Mind;
 using Content.Shared.Players;
 using Content.Shared.Preferences;
@@ -391,8 +392,13 @@ namespace Content.Server.GameTicking
             foreach (var (userId, status) in _playerGameStatuses)
             {
                 // ES START
-                if (LobbyEnabled && status is not (PlayerGameStatus.Observing or PlayerGameStatus.ReadyToPlay)) continue;
-                if (!_playerManager.TryGetSessionById(userId, out var session)) continue;
+                if (!_playerManager.TryGetSessionById(userId, out var session))
+                    continue;
+
+                ClearReadyStatusAlert(session);
+
+                if (LobbyEnabled && status is not (PlayerGameStatus.Observing or PlayerGameStatus.ReadyToPlay))
+                    continue;
 
                 if (autoDeAdmin && _adminManager.IsAdmin(session))
                 {
@@ -417,7 +423,9 @@ namespace Content.Server.GameTicking
                 }
                 else
                 {
-                    profile = HumanoidCharacterProfile.Random();
+                    var speciesToBlacklist =
+                        new HashSet<string>(_cfg.GetCVar(CCVars.ICNewAccountSpeciesBlacklist).Split(","));
+                    profile = HumanoidCharacterProfile.Random(speciesToBlacklist);
                 }
                 readyPlayerProfiles.Add(userId, profile);
             }
@@ -465,7 +473,10 @@ namespace Content.Server.GameTicking
             SendStatusToAll();
             ReqWindowAttentionAll();
             UpdateLateJoinStatus();
-            AnnounceRound();
+            // ES START
+            // we hijack this
+            // AnnounceRound();
+            // ES END
             UpdateInfoText();
             SendRoundStartedDiscordMessage();
 
@@ -557,6 +568,11 @@ namespace Content.Server.GameTicking
             var pvsOverride = _cfg.GetCVar(CCVars.RoundEndPVSOverrides);
             while (allMinds.MoveNext(out var mindId, out var mind))
             {
+// ES START
+                // Don't show minds that were never taken by players
+                if (mind.OriginalOwnerUserId == null)
+                    continue;
+// ES END
                 // TODO don't list redundant observer roles?
                 // I.e., if a player was an observer ghost, then a hamster ghost role, maybe just list hamster and not
                 // the observer role?
@@ -685,7 +701,9 @@ namespace Content.Server.GameTicking
             SendServerMessage(Loc.GetString("game-ticker-restart-round"));
 
             RoundNumberMetric.Inc();
-
+// ES START
+            _joinedPlayers.Clear();
+// ES END
             PlayersJoinedRoundNormally = 0;
 
             RunLevel = GameRunLevel.PreRoundLobby;
@@ -763,7 +781,10 @@ namespace Content.Server.GameTicking
 
             _banManager.Restart();
 
-            _gameMapManager.ClearSelectedMap();
+// ES START
+            // We need to have the map chosen in the lobby for job selection purposes.
+            _gameMapManager.SelectMapByConfigRules();
+// ES END
 
             // Clear up any game rules.
             ClearGameRules();
@@ -822,7 +843,10 @@ namespace Content.Server.GameTicking
             }
         }
 
-        private void AnnounceRound()
+        // ES START
+        // public
+        public void AnnounceRound()
+        // ES END
         {
             if (CurrentPreset == null) return;
 

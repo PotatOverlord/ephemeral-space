@@ -1,3 +1,7 @@
+# Used for daredevil objectives
+- type: Tag
+  id: ESAncestor
+
 - type: Tag
   id: ES357Round
 
@@ -15,6 +19,18 @@
 
 - type: Tag
   id: ESElectronicsKeypad
+
+# Used for daredevil objectives
+- type: Tag
+  id: ESEmitter
+
+# Items that can be stored in the display case
+- type: Tag
+  id: ESDisplayCaseItem
+
+# Used for daredevil objectives
+- type: Tag
+  id: ESGrille
 
 - type: Tag
   id: ESGunAttachmentBallisticBarrel
@@ -42,6 +58,9 @@
 
 - type: Tag
   id: ESSuitEVACaptain
+  
+- type: Tag
+  id: ESSpawnerCargo
 
 - type: Tag
   id: ESSuitEVAEngi
@@ -54,3 +73,4 @@
 
 - type: Tag
   id: ESThrusterEngineIon
+

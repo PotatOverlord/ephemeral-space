@@ -38,6 +38,9 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+// ES START
+using Content.Shared.Players;
+// ES END
 
 namespace Content.Server.Ghost
 {
@@ -228,7 +231,9 @@ namespace Content.Server.Ghost
 
         private void OnMapInit(EntityUid uid, GhostComponent component, MapInitEvent args)
         {
-            _actions.AddAction(uid, ref component.BooActionEntity, component.BooAction);
+// ES START
+            //_actions.AddAction(uid, ref component.BooActionEntity, component.BooAction);
+// ES END
             _actions.AddAction(uid, ref component.ToggleGhostHearingActionEntity, component.ToggleGhostHearingAction);
             _actions.AddAction(uid, ref component.ToggleLightingActionEntity, component.ToggleLightingAction);
             _actions.AddAction(uid, ref component.ToggleFoVActionEntity, component.ToggleFoVAction);
@@ -259,7 +264,10 @@ namespace Content.Server.Ghost
 
         private void OnPlayerDetached(EntityUid uid, GhostComponent component, PlayerDetachedEvent args)
         {
-            DeleteEntity(uid);
+// ES START
+            if (component.DeleteOnDetach)
+                DeleteEntity(uid);
+// ES END
         }
 
         private void DeleteEntity(EntityUid uid)
@@ -333,7 +341,8 @@ namespace Content.Server.Ghost
             if (_followerSystem.GetMostGhostFollowed() is not {} target)
                 return;
 
-            WarpTo(uid, target);
+            // If there is a ghostnado happening you almost definitely wanna join it, so we automatically follow instead of just warping.
+            _followerSystem.StartFollowingEntity(uid, target);
         }
 
         private void WarpTo(EntityUid uid, EntityUid target)
@@ -522,8 +531,11 @@ namespace Content.Server.Ghost
                     _adminLog.Add(LogType.Mind, $"{ToPrettyString(playerEntity.Value):player} is attempting to ghost via command");
             }
 
-            var handleEv = new GhostAttemptHandleEvent(mind, canReturnGlobal);
-            RaiseLocalEvent(handleEv);
+// ES START
+            // Pass in the whole mind entity
+            var handleEv = new GhostAttemptHandleEvent((mindId, mind), canReturnGlobal);
+            RaiseLocalEvent(mindId, handleEv);
+// ES END
 
             // Something else has handled the ghost attempt for us! We return its result.
             if (handleEv.Handled)
@@ -594,6 +606,15 @@ namespace Content.Server.Ghost
             if (playerEntity != null)
                 _adminLog.Add(LogType.Mind, $"{ToPrettyString(playerEntity.Value):player} ghosted{(!canReturn ? " (non-returnable)" : "")}");
 
+// ES START
+            // Handle sending people back to the theater.
+            if (_player.TryGetSessionById(mind.UserId, out var player) &&
+                _gameTicker.PlayerJoinLobby(player, true))
+            {
+                return true;
+            }
+// ES END
+
             var ghost = SpawnGhost((mindId, mind), position, canReturn);
 
             if (ghost == null)
@@ -603,9 +624,12 @@ namespace Content.Server.Ghost
         }
     }
 
-    public sealed class GhostAttemptHandleEvent(MindComponent mind, bool canReturnGlobal) : HandledEntityEventArgs
+// ES START
+    // Change the mind comp to a entity<T>
+    public sealed class GhostAttemptHandleEvent(Entity<MindComponent> mind, bool canReturnGlobal) : HandledEntityEventArgs
     {
-        public MindComponent Mind { get; } = mind;
+        public Entity<MindComponent> Mind { get; } = mind;
+// ES END
         public bool CanReturnGlobal { get; } = canReturnGlobal;
         public bool Result { get; set; }
     }

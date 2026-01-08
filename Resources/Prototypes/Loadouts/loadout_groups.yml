@@ -118,7 +118,6 @@
 - type: loadoutGroup
   id: CaptainHead
   name: loadout-group-captain-head
-  minLimit: 0
   loadouts:
   - CaptainHead
   - CaptainCap
@@ -166,7 +165,6 @@
 - type: loadoutGroup
   id: HoPHead
   name: loadout-group-hop-head
-  minLimit: 0
   loadouts:
   - HoPHead
 
@@ -272,7 +270,6 @@
 - type: loadoutGroup
   id: BartenderHead
   name: loadout-group-bartender-head
-  minLimit: 0
   loadouts:
   - BartenderHead
   - BartenderBowler
@@ -288,7 +285,6 @@
 - type: loadoutGroup
   id: BartenderOuterClothing
   name: loadout-group-bartender-outerclothing
-  minLimit: 0
   loadouts:
   - BartenderVest
   - BartenderApron
@@ -312,7 +308,6 @@
 - type: loadoutGroup
   id: ChefHead
   name: loadout-group-chef-head
-  minLimit: 0
   loadouts:
   - ChefHead
 
@@ -457,7 +452,6 @@
 - type: loadoutGroup
   id: JanitorHead
   name: loadout-group-janitor-head
-  minLimit: 0
   loadouts:
   - JanitorHead
 
@@ -485,18 +479,12 @@
   - JanitorWintercoat
 
 - type: loadoutGroup
-  id: JanitorPlunger
-  name: loadout-group-janitor-plunger
-  minLimit: 0
-  loadouts:
-  - JanitorGoldenPlunger
-
-- type: loadoutGroup
   id: JanitorJobTrinkets
   name: loadout-group-jobtrinkets
   minLimit: 0
   loadouts:
   - LizardPlushieJanitor
+  - JanitorGoldenPlunger
 
 - type: loadoutGroup
   id: BotanistHead
@@ -525,7 +513,6 @@
 - type: loadoutGroup
   id: BotanistOuterClothing
   name: loadout-group-botanist-outerclothing
-  minLimit: 0
   loadouts:
   - BotanistApron
   - BotanistWintercoat
@@ -593,6 +580,7 @@
   minLimit: 0
   loadouts:
   - LizardPlushieClown
+  - FlowerWaterClown
 
 - type: loadoutGroup
   id: MimeHead
@@ -765,7 +753,6 @@
 - type: loadoutGroup
   id: CargoTechnicianHead
   name: loadout-group-cargo-technician-head
-  minLimit: 0
   loadouts:
   - CargoTechnicianHead
 
@@ -905,7 +892,6 @@
 - type: loadoutGroup
   id: StationEngineerHead
   name: loadout-group-station-engineer-head
-  minLimit: 0
   loadouts:
   - StationEngineerHardhatYellow
   - StationEngineerHardhatOrange
@@ -933,7 +919,6 @@
 - type: loadoutGroup
   id: StationEngineerOuterClothing
   name: loadout-group-station-engineer-outerclothing
-  minLimit: 0
   loadouts:
   - StationEngineerOuterVest
   - StationEngineerWintercoat
@@ -1089,7 +1074,6 @@
 - type: loadoutGroup
   id: ScientistOuterClothing
   name: loadout-group-scientist-outerclothing
-  minLimit: 0
   loadouts:
   - RegularLabCoat
   - ScienceLabCoat
@@ -1147,7 +1131,6 @@
 - type: loadoutGroup
   id: HeadofSecurityHead
   name: loadout-group-head-of-security-head
-  minLimit: 0
   loadouts:
   - HeadofSecurityHead
   - HeadofSecurityBeret
@@ -1184,11 +1167,11 @@
   minLimit: 0
   loadouts:
   - LizardPlushieHeadofSecurity
+  - SecStar
 
 - type: loadoutGroup
   id: WardenHead
   name: loadout-group-warden-head
-  minLimit: 0
   loadouts:
   - WardenHead
   - WardenBeret
@@ -1213,11 +1196,11 @@
   minLimit: 0
   loadouts:
   - LizardPlushieWarden
+  - SecStar
 
 - type: loadoutGroup
   id: SecurityHead
   name: loadout-group-security-head
-  minLimit: 0
   loadouts:
   - SecurityHelmet
   - SecurityBeret
@@ -1279,11 +1262,11 @@
   minLimit: 0
   loadouts:
   - LizardPlushieSecurity
+  - SecStar
 
 - type: loadoutGroup
   id: DetectiveHead
   name: loadout-group-detective-head
-  minLimit: 0
   loadouts:
   - DetectiveFedora
   - DetectiveFedoraGrey
@@ -1291,7 +1274,6 @@
 - type: loadoutGroup
   id: DetectiveNeck
   name: loadout-group-detective-neck
-  minLimit: 0
   loadouts:
   - DetectiveTie
 
@@ -1308,7 +1290,6 @@
   id: DetectiveOuterClothing
   name: loadout-group-detective-outerclothing
   loadouts:
-  - DetectiveArmorVest
   - DetectiveCoat
   - DetectiveCoatGrey
 
@@ -1318,6 +1299,7 @@
   minLimit: 0
   loadouts:
   - LizardPlushieDetective
+  - SecStar
 
 - type: loadoutGroup
   id: SecurityCadetJumpsuit
@@ -1342,13 +1324,6 @@
   - EmergencyNitrogenSecurity
   - EmergencyOxygenSecurity
   - LoadoutSpeciesVoxNitrogen
-
-- type: loadoutGroup
-  id: SecurityStar
-  name: loadout-group-security-star
-  minLimit: 0
-  loadouts:
-  - SecStar
 
 # Medical
 - type: loadoutGroup
@@ -1426,7 +1401,6 @@
 - type: loadoutGroup
   id: MedicalDoctorOuterClothing
   name: loadout-group-medical-doctor-outerclothing
-  minLimit: 0
   loadouts:
   - RegularLabCoat
   - MedicalDoctorWintercoat
@@ -1457,9 +1431,7 @@
 - type: loadoutGroup
   id: MedicalGloves
   name: loadout-group-medical-gloves
-  minLimit: 0
   loadouts:
-  - LatexGloves
   - NitrileGloves
 
 - type: loadoutGroup
@@ -1500,7 +1472,6 @@
 - type: loadoutGroup
   id: ChemistOuterClothing
   name: loadout-group-chemist-outerclothing
-  minLimit: 0
   loadouts:
   - RegularLabCoat
   - ChemistLabCoat
@@ -1608,36 +1579,6 @@
   loadouts:
   - LizardPlushiePsychologist
 
-- type: loadoutGroup
-  id: BoxerJumpsuit
-  name: loadout-group-boxer-jumpsuit
-  loadouts:
-  - BoxerShorts
-  - BoxerShortsWithTop
-
-- type: loadoutGroup
-  id: BoxerGloves
-  name: loadout-group-boxer-gloves
-  loadouts:
-  - RedBoxingGloves
-  - BlueBoxingGloves
-  - GreenBoxingGloves
-  - YellowBoxingGloves
-
-- type: loadoutGroup
-  id: BoxerJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieBoxer
-
-- type: loadoutGroup
-  id: ZookeeperJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieZookeeper
-
 # Other
 - type: loadoutGroup
   id: SurvivalSyndicate
@@ -1648,6 +1589,15 @@
   - EmergencyNitrogenSyndicate
   - EmergencyOxygenSyndicate
   - LoadoutSpeciesVoxNitrogen
+
+- type: loadoutGroup
+  id: SurvivalMilitaryDouble
+  name: loadout-group-survival-military
+  minLimit: 2
+  hidden: true
+  loadouts:
+  - EmergencyNitrogenMilitaryDouble
+  - EmergencyOxygenMilitaryDouble
 
 - type: loadoutGroup
   id: GroupSpeciesBreathTool

@@ -57,7 +57,17 @@ public sealed partial class LightBulbComponent : Component
     /// The amount of power used by the lightbulb when it's active.
     /// </summary>
     [DataField("PowerUse")]
-    public int PowerUse = 60;
+    // ES START
+    public int PowerUse = 20;
+    // ES END
+
+    // ES START
+    /// <summary>
+    ///     Overrides the color used for the light glow overlay when this bulb is inserted into a fixture.
+    /// </summary>
+    [DataField]
+    public Color? GlowColorOverride = null;
+    // ES END
 
     /// <summary>
     /// The sound produced when the lightbulb breaks.

@@ -63,7 +63,7 @@
     - id: FloorTileItemSteel
     - id: CheapLighter
     - id: TreasureCoinIron
-    - id: LightTube
+    - id: ESLightTubeDepartment
     - id: LightBulb
     - id: Matchstick
     - id: DrinkGlass
@@ -152,7 +152,7 @@
 
     - id: DrinkBeerBottleFull
     - id: DrinkHotCoffee
-    - id: StrangePill
+    - id: ESStrangePill
 
     - id: BodyBagFolded
     - id: FireExtinguisher
@@ -163,7 +163,7 @@
     - id: ClothingHeadHatCone
 
     - group:
-      - id: GlowstickBase
+      - id: GlowstickGreen
       - id: GlowstickBlue
       - id: GlowstickPurple
       - id: GlowstickRed
@@ -299,6 +299,8 @@
     - id: SpectralLocator
     - id: d20Dice
     - id: Wristwatch
+
+    - id: WeaponPistolCHIMP
 
 - type: entityTable
   id: ESMaintLootRare

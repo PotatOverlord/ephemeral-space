@@ -1,10 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Content.Shared._ES.Masks;
 using Content.Shared._ES.Nuke.Components;
+using Content.Shared._ES.Objectives;
+using Content.Shared._ES.Objectives.Components;
+using Content.Shared._ES.Sparks;
 using Content.Shared.Examine;
-using Content.Shared.Mind;
 using Content.Shared.Objectives.Components;
-using Content.Shared.Objectives.Systems;
 using Content.Shared.Station;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -15,7 +17,8 @@ public abstract class ESSharedCryptoNukeSystem : EntitySystem
 {
     [Dependency] protected readonly IGameTiming Timing = default!;
     [Dependency] private readonly ESSharedMaskSystem _mask = default!;
-    [Dependency] private readonly SharedObjectivesSystem _objectives = default!;
+    [Dependency] private readonly ESSharedObjectiveSystem _objective = default!;
+    [Dependency] private readonly ESSparksSystem _sparks = default!;
     [Dependency] protected readonly SharedStationSystem Station = default!;
     [Dependency] protected readonly SharedUserInterfaceSystem UserInterface = default!;
 
@@ -27,7 +30,7 @@ public abstract class ESSharedCryptoNukeSystem : EntitySystem
         SubscribeLocalEvent<ESCryptoNukeConsoleComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<ESCryptoNukeConsoleComponent, ExaminedEvent>(OnExamined);
 
-        SubscribeLocalEvent<ESCryptoNukeHackObjectiveComponent, ObjectiveGetProgressEvent>(OnGetProgress);
+        SubscribeLocalEvent<ESCryptoNukeHackObjectiveComponent, ESGetObjectiveProgressEvent>(OnGetProgress);
 
         Subs.BuiEvents<ESCryptoNukeConsoleComponent>(ESCryptoNukeConsoleUiKey.Key,
             subs =>
@@ -48,7 +51,7 @@ public abstract class ESSharedCryptoNukeSystem : EntitySystem
         args.PushMarkup(Loc.GetString("es-cryptonuke-examine-compromised"));
     }
 
-    private void OnGetProgress(Entity<ESCryptoNukeHackObjectiveComponent> ent, ref ObjectiveGetProgressEvent args)
+    private void OnGetProgress(Entity<ESCryptoNukeHackObjectiveComponent> ent, ref ESGetObjectiveProgressEvent args)
     {
         args.Progress = GetCompromisedTerminalPercent();
     }
@@ -64,9 +67,12 @@ public abstract class ESSharedCryptoNukeSystem : EntitySystem
         if (!ArePreRequisiteObjectivesDone())
             return;
 
+        _sparks.DoSparks(ent, user: args.Actor, cooldown: false);
+
         ent.Comp.Compromised = true;
         Dirty(ent);
         UpdateUiState((ent, ent, Comp<UserInterfaceComponent>(ent)));
+        _objective.RefreshObjectiveProgress<ESCryptoNukeHackObjectiveComponent>();
     }
 
     protected virtual void UpdateUiState(Entity<ESCryptoNukeConsoleComponent, UserInterfaceComponent> ent)
@@ -117,21 +123,10 @@ public abstract class ESSharedCryptoNukeSystem : EntitySystem
     /// </summary>
     public bool ArePreRequisiteObjectivesDone()
     {
-        if (!_mask.TryGetTroupeEntity(TraitorTroupe, out var troupe) ||
-            !TryComp<MindComponent>(troupe, out var mind))
+        if (!_mask.TryGetTroupeEntity(TraitorTroupe, out var troupe))
             return false;
 
-        foreach (var objective in troupe.Value.Comp.AssociatedObjectives)
-        {
-            if (!HasComp<ESNukePrereqObjectiveComponent>(objective))
-                continue;
-
-            if (_objectives.IsCompleted(objective, (troupe.Value, mind)))
-                continue;
-
-            return false;
-        }
-
-        return true;
+        return _objective.GetObjectives<ESNukePrereqObjectiveComponent>(troupe.Value.Owner)
+            .All(e => _objective.IsCompleted(e.Owner));
     }
 }

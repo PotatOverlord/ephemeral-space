@@ -42,13 +42,13 @@ highlights-janitor = Janitor, "Jani"
 highlights-lawyer = Lawyer, Attorney
 highlights-librarian = Librarian, Library
 highlights-mime = Mime
-highlights-passenger = Passenger, Greytider, "Tider"
+# ES START
+highlights-passenger = Assistant, Greytider, "Tider"
+# ES END
 highlights-service-worker = Service Worker
 
 # Station-specific
-highlights-boxer = Boxer
 highlights-reporter = Reporter, Journalist
-highlights-zookeeper = Zookeeper
 highlights-psychologist = Psychologist, Psychology
 
 # Silicon
