@@ -33,6 +33,7 @@
     consumerFixtureId: fix1
     consumeTiles: false
     consumeAliveMobs: false
+    radius: 0.01 # eat continuously...
   - type: DamageContacts
     damage:
       types:

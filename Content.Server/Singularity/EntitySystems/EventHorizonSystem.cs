@@ -38,9 +38,9 @@ public sealed class EventHorizonSystem : SharedEventHorizonSystem
     [Dependency] private readonly SharedTransformSystem _xformSystem = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private readonly TagSystem _tagSystem = default!;
-    // ES Start
-    [Dependency] protected readonly MobStateSystem MobStateSystem = default!;
-    // ES End
+    // ES START
+    [Dependency] private readonly MobStateSystem _mobState = default!;
+    // ES END
     #endregion Dependencies
 
     private static readonly ProtoId<TagPrototype> HighRiskItemTag = "HighRiskItem";
@@ -190,7 +190,9 @@ public sealed class EventHorizonSystem : SharedEventHorizonSystem
                 continue;
 
             // See TODO above
-            if (_physicsQuery.TryComp(entity, out var otherBody) && !_physics.IsHardCollidable((uid, null, body), (entity, null, otherBody)))
+// ES START
+            if (_physicsQuery.TryComp(entity, out var otherBody) && !_physics.IsHardCollidable((uid, null, body), (entity, null, otherBody)) && !HasComp<MobStateComponent>(entity))
+// ES END
                 continue;
 
             AttemptConsumeEntity(uid, entity, eventHorizon);
@@ -412,17 +414,16 @@ public sealed class EventHorizonSystem : SharedEventHorizonSystem
             PreventConsume(uid, comp, ref args);
     }
 
-    // ES Start
+    // ES START
     public void PreventConsumeAlive(Entity<MobStateComponent> ent, ref EventHorizonAttemptConsumeEntityEvent args)
     {
         if (args.Cancelled || args.EventHorizon.consumeAliveMobs)
             return;
-        if (MobStateSystem.IsDead(ent.Owner, ent.Comp))
+        if (_mobState.IsDead(ent.Owner, ent.Comp))
             return;
         PreventConsume(ent.Owner, ent.Comp, ref args);
     }
-
-    // ES End
+    // ES END
 
     /// <summary>
     /// Handles event horizons consuming any entities they bump into.
