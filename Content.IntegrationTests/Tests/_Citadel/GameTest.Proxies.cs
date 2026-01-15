@@ -300,4 +300,38 @@ public abstract partial class GameTest
 
         return res;
     }
+
+    /// <summary>
+    ///     Checks whether the given entity has been deleted on the server.
+    /// </summary>
+    public bool SDeleted(EntityUid? ent)
+    {
+        return Server.EntMan.Deleted(ent);
+    }
+
+    /// <summary>
+    ///     Checks whether the given entity has been deleted on the client.
+    /// </summary>
+    public bool CDeleted(EntityUid? ent)
+    {
+        return Client.EntMan.Deleted(ent);
+    }
+
+    /// <summary>
+    ///     Checks whether the given entity has the given component.
+    /// </summary>
+    public bool SHasComp<T>(EntityUid? ent)
+        where T: IComponent
+    {
+        return Server.EntMan.HasComponent<T>(ent);
+    }
+
+    /// <summary>
+    ///     Checks whether the given entity has the given component.
+    /// </summary>
+    public bool CHasComp<T>(EntityUid? ent)
+        where T: IComponent
+    {
+        return Client.EntMan.HasComponent<T>(ent);
+    }
 }
