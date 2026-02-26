@@ -193,7 +193,7 @@
       - to: girder
         completed:
         - !type:SpawnPrototype
-          prototype: Steel
+          prototype: SheetSteel1
           amount: 2
         steps:
         - tool: Welding
@@ -394,7 +394,7 @@
       - to: girder
         completed:
         - !type:SpawnPrototype
-          prototype: Plasteel
+          prototype: SheetPlasteel1
           amount: 2
         steps:
         - tool: Welding
