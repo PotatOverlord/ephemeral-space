@@ -153,6 +153,16 @@
             amount: 4
             doAfter: 2
 
+        - to: ESSecretDoorSolid
+          conditions:
+          - !type:EntityAnchored { }
+          steps:
+          - tool: Prying # TODO Figure out better differentiation step
+            doAfter: 1
+          - material: Steel
+            amount: 2
+            doAfter: 2
+
     - node: ESWallTube
       entity: ESWallTube
       edges:
@@ -176,6 +186,22 @@
         steps:
         - tool: Welding
           doAfter: 10
+
+    - node: ESSecretDoorSolid
+      entity: ESSecretDoorSolid
+      edges:
+      - to: girder
+        completed:
+        - !type:SpawnPrototype
+          prototype: Steel
+          amount: 2
+        steps:
+        - tool: Welding
+          doAfter: 10
+      - to: WallSolid
+        steps:
+        - tool: Screwing
+          doAfter: 5
 # ES END
 
     - node: wall
@@ -351,6 +377,33 @@
           steps:
             - tool: Cutting
               doAfter: 2
+#ES START
+        - to: ESSecretDoorReinforced
+          conditions:
+          - !type:EntityAnchored { }
+          steps:
+          - tool: Prying # TODO Figure out better differentiation step
+            doAfter: 1
+          - material: Plasteel
+            amount: 2
+            doAfter: 2
+
+    - node: ESSecretDoorReinforced
+      entity: ESSecretDoorReinforced
+      edges:
+      - to: girder
+        completed:
+        - !type:SpawnPrototype
+          prototype: Plasteel
+          amount: 2
+        steps:
+        - tool: Welding
+          doAfter: 15
+      - to: WallReinforced
+        steps:
+        - tool: Screwing
+          doAfter: 10
+  # ES END
 
     - node: reinforcedWall
       entity: WallReinforced
